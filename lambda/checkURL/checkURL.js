@@ -1,4 +1,6 @@
-const request = require('request');
+const request = require('async-request');
+const querystring = require('querystring');
+const validator = require('validator');
 
 // const link = "https://nodejs124.org/";
 
@@ -27,18 +29,39 @@ const request = require('request');
 // });
 
 exports.handler = async (event, context, callback) => {
+  
   if (
-		event.httpMethod !== 'POST' ||
-		event.headers.origin !== 'https://isitdown.netlify.app'
+    event.httpMethod !== 'POST' 
+    // || event.headers.origin !== 'https://isitdown.netlify.app'
 	) {
 		callback(null, {
 			statusCode: 400,
 			body: 'You are not allowed to do that.',
     });
+    return;
   }
 
+  const {url} = querystring.parse(event.body);
+  if(!url || !validator.isURL(url)) {
+    callback(null, {
+			statusCode: 400,
+			body: 'URL parameter is missing or not correct.',
+    });
+    return;
+  }
+
+  let response;
+
+  try {
+    response = await request(url);
+  } catch(error) {
+    response = error;
+  }
+  
   callback(null, {
     statusCode: 200,
-    body: 'Hello World',
+    body: `${response.statusCode}`,
   });
+
+  return;
 };

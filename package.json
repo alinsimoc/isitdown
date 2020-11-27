@@ -5,6 +5,9 @@
   "author": "EntBit",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.2"
+    "async-request": "^1.2.0",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2",
+    "validator": "^13.1.17"
   }
 }
