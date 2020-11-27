@@ -27,6 +27,8 @@ const request = require('request');
 // });
 
 exports.handler = async (event, context, callback) => {
+  console.log(event, context);
+  
   callback(null, {
     statusCode: 200,
     body: 'Hello World',
