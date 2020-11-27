@@ -1,0 +1,10 @@
+{
+  "name": "netlify-is-it-down",
+  "version": "1.0.0",
+  "description": "",
+  "author": "EntBit",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
