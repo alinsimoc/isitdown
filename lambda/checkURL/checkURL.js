@@ -27,8 +27,16 @@ const request = require('request');
 // });
 
 exports.handler = async (event, context, callback) => {
-  console.log(event, context);
-  
+  if (
+		event.httpMethod !== 'POST' ||
+		event.headers.origin !== 'https://isitdown.netlify.app'
+	) {
+		callback(null, {
+			statusCode: 400,
+			body: 'You are not allowed to do that.',
+    });
+  }
+
   callback(null, {
     statusCode: 200,
     body: 'Hello World',
