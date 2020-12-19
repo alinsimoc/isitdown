@@ -5,7 +5,7 @@ exports.handler = async (event, context, callback) => {
   
   if (
     event.httpMethod !== 'POST' 
-    // || event.headers.origin !== 'https://isitdown.netlify.app'
+    || event.headers.origin !== 'https://isitdown.netlify.app'
 	) {
 		callback(null, {
 			statusCode: 400,
