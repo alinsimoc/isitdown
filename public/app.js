@@ -11,7 +11,7 @@ form.addEventListener('submit', async (e) => {
   message.innerHTML = 'Loading...'
 
   const response = await axios.post(
-    'http://localhost:8888/.netlify/functions/checkURL', 
+    '/.netlify/functions/checkURL', 
     inputURL
   ).catch(e => message.innerHTML = `
     <span class="text-red-500 font-bold">Error: </span> ${e.response.data}
@@ -50,7 +50,7 @@ const popularServices = document.getElementById('popularServices');
 
 services.forEach( async(service, index) => { 
   const response = await axios.post(
-    'http://localhost:8888/.netlify/functions/checkURL', 
+    '/.netlify/functions/checkURL', 
     service.url
   );
 
