@@ -2,12 +2,10 @@
   "name": "netlify-is-it-down",
   "version": "1.0.0",
   "description": "",
-  "author": "EntBit",
+  "author": "entbit",
   "license": "MIT",
   "dependencies": {
-    "async-request": "^1.2.0",
-    "querystring": "^0.2.0",
-    "request": "^2.88.2",
+    "axios": "^0.21.0",
     "validator": "^13.1.17"
   }
 }

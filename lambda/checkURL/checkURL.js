@@ -1,32 +1,5 @@
-const request = require('async-request');
-const querystring = require('querystring');
+const axios = require("axios");
 const validator = require('validator');
-
-// const link = "https://nodejs124.org/";
-
-// request(link , function (error, response, body) {
-//   if(error){
-//     console.log('Err: '+ error);
-//     return false;
-//   }
-
-//   if(response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 202){
-//     console.log(link + ' is up!!');
-//     return false;
-//   }
-
-//   if(response.statusCode == 301 || response.statusCode == 302){
-//     console.log(link + ' is redirecting us!!');
-//     return false;
-//   }
-
-//   if(response.statusCode == 401){
-//     console.log("you are unauthorized to " + link);
-//     return false;
-//   }else{
-//     console.log(link + ' is down!!');
-//   }
-// });
 
 exports.handler = async (event, context, callback) => {
   
@@ -41,27 +14,48 @@ exports.handler = async (event, context, callback) => {
     return;
   }
 
-  const {url} = querystring.parse(event.body);
+  const url = event.body.includes('http') ? event.body : `https://${event.body}`;
+
   if(!url || !validator.isURL(url)) {
     callback(null, {
 			statusCode: 400,
-			body: 'URL parameter is missing or not correct.',
+			body: 'URL parameter is missing or is not correct.',
     });
     return;
   }
 
-  let response;
+  const axiosInstance = axios.create();
 
-  try {
-    response = await request(url);
-  } catch(error) {
-    response = error;
-  }
-  
+  axiosInstance.interceptors.request.use((config) => {
+    config.headers['request-startTime'] = process.hrtime();
+    return config;
+  });
+
+  axiosInstance.interceptors.response.use((response) => {
+    const start = response.config.headers['request-startTime'];
+    const end = process.hrtime(start);
+    const milliseconds = Math.round((end[0] * 1000) + (end[1] / 1000000));
+    response['requestDuration'] = milliseconds;
+    return response;
+  })
+
+  const timeout = 3000;
+  const response = await axiosInstance.get(url, {timeout}).catch(error => console.log(error));
+
+  const isDown = response ? ![200, 201, 202, 301, 302].includes(response.status) : true;
+  const requestDuration = response ? response.requestDuration : 0;
+
   callback(null, {
     statusCode: 200,
-    body: `${response.statusCode}`,
+    body: JSON.stringify({
+      url,
+      isDown,
+      requestDuration
+    })
   });
 
   return;
 };
+
+ 
+ 
